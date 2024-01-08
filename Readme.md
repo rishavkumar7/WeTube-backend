@@ -1,3 +1,3 @@
 # WeTube App
 
-WeTube backend code
+WeTube backend application
