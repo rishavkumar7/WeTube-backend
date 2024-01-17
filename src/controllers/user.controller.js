@@ -18,7 +18,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;     // fetching local path of avatar's uploaded image by multer in the backend server for uploading in cloudinary
-    const coverImageLocalPath = "";    // // fetching local path of coverImage's uploaded image by multer in the backend server for uploading in cloudinary
+    let coverImageLocalPath = "";    // // fetching local path of coverImage's uploaded image by multer in the backend server for uploading in cloudinary
     if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
         coverImageLocalPath = req.files.coverImage[0]?.path;
     }
