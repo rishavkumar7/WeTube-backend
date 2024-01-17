@@ -7,18 +7,21 @@ import { ApiResponse } from "./../utils/ApiResponse.js";
 const registerUser = asyncHandler(async (req, res) => {
     const { fullname, username, email, password } = req.body;   // fetching the request body data
 
-    if ([fullname, username, email, password].some((field) => (field?.trim() === ""))) {   // validations for empty fields
-        throw new ApiError(400, "fullname, username, email, password is missing");
+    if ([fullname, username, email, password].some((field) => (!field || field?.trim() === ""))) {   // validations for empty fields
+        throw new ApiError(400, "fullname, username, email, password is required");
     }
 
-    const existedUser = User.findOne({$or: [{ username }, { email }]});    // fetching an existing user with same username/email from db
+    const existingUser = await User.findOne({$or: [{ username }, { email }]});    // fetching an existing user with same username/email from db
 
     if (existingUser) {     // restricting duplicate entry of user
         throw new ApiError(409, "A user with same username/email already exists");
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;     // fetching local path of avatar's uploaded image by multer in the backend server for uploading in cloudinary
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;    // // fetching local path of coverImage's uploaded image by multer in the backend server for uploading in cloudinary
+    const coverImageLocalPath = "";    // // fetching local path of coverImage's uploaded image by multer in the backend server for uploading in cloudinary
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0]?.path;
+    }
 
     if (!avatarLocalPath) {    // checking if avatar's local path is there in the backend server or not (if not then avatar wasn't uploaded through frontend)
         throw new ApiError(400, "Avatar file is required");
